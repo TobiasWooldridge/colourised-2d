@@ -1,0 +1,120 @@
+<html>
+<head>
+    <title>Colourised</title>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+
+    <style>
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: -moz-none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            background: #fff;
+        }
+
+        #colours {
+            border-collapse: collapse;
+            cursor: crosshair;
+
+        }
+
+        #colours td {
+            margin: 0;
+            padding: 0;
+            width: 50px;
+            height: 50px;
+            border: 2px solid #ddd;
+            background: #fff;
+        }
+
+        #palette li {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: #333;
+            margin: 15px;
+            border: 1px solid #333;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+<table id="colours"></table>
+
+<ul id="palette"></ul>
+
+<script>
+    $(document).ready(function() {
+        var columns = 16;
+        var rows = 16;
+
+        var paletteColours = ["#fff", "#000", "#f00", "#0f0", "#00f"];
+        var brushColour = "#000";
+
+        var mouseIsDown = false;
+        $("*").mousedown(function() {
+            mouseIsDown = true;
+        });
+        $("*").mouseup(function() {
+            mouseIsDown = false;
+        });
+
+
+        function attachPixelEvents(pixel) {
+            function paint(target) {
+                target.css("background", brushColour);
+            }
+
+            pixel.mouseover(function() {
+                if (mouseIsDown) {
+                    paint(pixel);
+                }
+            });
+
+            pixel.mousedown(function() {
+                paint(pixel);
+            });
+        }
+        function attachSwatchEvents(swatch, colour) {
+            swatch.click(function() {
+                brushColour = colour;
+            });
+        }
+
+        function createCanvas (canvas) {
+            for (var y = 0; y < rows; y++) {
+                var row = $("<tr />");
+                row.appendTo(row);
+
+                for (var x = 0; x < columns; x++) {
+                    var pixel = $("<td />");
+                    pixel.appendTo(row);
+
+                    attachPixelEvents(pixel);
+                }
+
+                canvas.append(row);
+            }
+        }
+
+        function createPalette(palette) {
+            for (var i = 0; i < paletteColours.length; i++) {
+                var swatch = $("<li></li>");
+                swatch.css("background", paletteColours[i]);
+                swatch.appendTo(palette);
+
+                attachSwatchEvents(swatch, paletteColours[i]);
+            }
+        }
+
+        createCanvas($("#colours"));
+        createPalette($("#palette"));
+    });
+</script>
+</body>
+</html>
